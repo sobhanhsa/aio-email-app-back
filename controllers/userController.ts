@@ -151,8 +151,6 @@ export async function loginHandler(req:Request, res:Response) {
         sameSite: 'lax',
     });
 
-    
-
     return res.status(200).json({
         "message":"success",
         "user":user
@@ -195,13 +193,14 @@ export async function authorizeHandler(req:Request, res:Response) {
                 
         
         await connectToDB();
-        const user = await UserModel.findById(new mongoose.Types.ObjectId(data.id));
 
-        if (user === null) return res.status(403).json({"message":"invalid id"});
+        const user = await UserModel.findById(data.id);
+
+        if (!user) return res.status(403).json({"message":"invalid id"});
 
         user.hash = "";
 
-        const userExpireDate = new Date(Number(req.cookies.access_token_expire));
+        const userExpireDate = new Date(req.cookies.access_token_expire);
 
         res.cookie("user", user, {
             expires: userExpireDate,
@@ -211,7 +210,8 @@ export async function authorizeHandler(req:Request, res:Response) {
         });
 
         return res.status(200).json({message:"authorized"});
-    } catch {
-        return res.status(400).json({"message":"invalid token"});
+    } catch(e) {
+        console.log(e);
+        return res.status(500).json({"message":"some thing went wrong"});
     };
 }
