@@ -76,8 +76,16 @@ export async function signupHandler(req : Request, res : Response) {
             user:user
         })
 
-    } catch (err) {
-        console.log(err);
+    } catch (err:any) {
+        console.log(err.message);
+        if ((err.message as string).includes("E11000")) {
+            return res.status(403).json(
+                {
+                    message:"duplicated username or email",
+                    error:err
+                }
+            )
+        }
         return res.status(500).json(
             {
                 message:"failure",
