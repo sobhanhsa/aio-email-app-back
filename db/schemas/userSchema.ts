@@ -1,12 +1,13 @@
-import mongoose, { Schema, InferSchemaType } from 'mongoose';
+import mongoose, { Schema, InferSchemaType , Types } from 'mongoose';
 
 const messageSchema = new Schema({
     receivers:{
-        type:[String],
+        type:[{type:Types.ObjectId,ref:"User"}],
         required:true
     },
     sender:{
-        type:String,
+        type:Types.ObjectId,
+        ref:"User",
         required:true
     },
     subject:{
@@ -17,6 +18,14 @@ const messageSchema = new Schema({
         type:String,
         required:true
     },
+    isReplied:{
+        type:Boolean,
+        default:false
+    },
+    repliedTo:{
+        type:mongoose.Types.ObjectId,
+        ref:"Message"
+    }
 
 })
 
@@ -42,7 +51,7 @@ const userSchema = new Schema({
             required: true,
         },
         messages : {
-            type:[String],
+            type:[messageSchema],
             default:[]
         },
     },
