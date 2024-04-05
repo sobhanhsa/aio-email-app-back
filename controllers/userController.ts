@@ -51,8 +51,10 @@ export async function signupHandler(req : Request, res : Response) {
         const user = await UserModel.create({...body,hash});
         
         const token = jwt
-            .sign({ id: user._id}, process.env.SECRET as string);
-    
+        .sign({ id: user._id}, process.env.SECRET as string);
+        
+        user.hash="";
+
         let expireDate = new Date(Date.now() + 15*24*60*60*1000);
 
         res.cookie("access_token", token, {
@@ -68,8 +70,14 @@ export async function signupHandler(req : Request, res : Response) {
             httpOnly: true,
             sameSite: 'lax',
         });
+
+        res.cookie("user", JSON.stringify(user), {
+            expires: expireDate,
+            secure: false,
+            httpOnly: true,
+            sameSite: 'lax',
+        });
         
-        user.hash=""
 
         return res.status(201).json({
             message:"success",
@@ -153,6 +161,13 @@ export async function loginHandler(req:Request, res:Response) {
     });
     
     res.cookie("access_token_expire", expireDate, {
+        expires: expireDate,
+        secure: false,
+        httpOnly: true,
+        sameSite: 'lax',
+    });
+
+    res.cookie("user", JSON.stringify(user), {
         expires: expireDate,
         secure: false,
         httpOnly: true,
