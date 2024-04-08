@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import {UserModel} from "../db/schemas/userSchema";
 import { NextFunction, Request, Response } from "express";
+import { connectToDB } from "../db/utils";
 
 const protectRoute = async (req:Request, res:Response, next:NextFunction) => {
 	try {
@@ -16,6 +17,8 @@ const protectRoute = async (req:Request, res:Response, next:NextFunction) => {
 		if (!decoded) {
 			return res.status(401).json({ error: "Unauthorized - Invalid Token" });
 		}
+
+        await connectToDB();
 
 		const user = await UserModel.findById(decoded.id).select("-hash");
 
