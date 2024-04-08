@@ -4,9 +4,10 @@ configDotenv()
 
 import express from "express";
 import cookieParser from "cookie-parser";
-import router from "./routers/userRouter";
+import userRouter from "./routers/userRouter";
 import { app , server } from "./socket/socket";
 import cors from "cors";
+import messageRouter from "./routers/messageRouter";
 
 const port = process.env.PORT || 8000;
 
@@ -19,6 +20,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
-app.use("/",router)
+
+app.use("/user",userRouter);
+app.use("/message",messageRouter);
 
 server.listen(port, () => console.log("server in running on port %d",port));
