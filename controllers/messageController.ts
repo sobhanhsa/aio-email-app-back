@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { MessageModel, UserType } from "../db/schemas/userSchema";
 import { getReceiverSocketId, io } from "../socket/socket";
 
-export const sendMessages = async(req:Request,res:Response) => {
+export const sendMessageHandler = async(req:Request,res:Response) => {
     try {
         const { message } = req.body;
 		const { id: receiverId } = req.params;
@@ -29,7 +29,7 @@ export const sendMessages = async(req:Request,res:Response) => {
     }
 };
 
-export const getMessages = async(req:Request,res:Response) => {
+export const getMessagesHandler = async(req:Request,res:Response) => {
     try {
         
         const userId = (req as any).user._id;
