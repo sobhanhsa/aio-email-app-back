@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { MessageModel, UserType } from "../db/schemas/userSchema";
+import { MessageModel, UserModel, UserType } from "../db/schemas/userSchema";
 import { getReceiverSocketId, io } from "../socket/socket";
 import { connectToDB } from "../db/utils";
 
@@ -8,13 +8,28 @@ export const sendMessageHandler = async(req:Request,res:Response) => {
         await connectToDB();
 
         const body = req.body;
-		const { id: receiverId } = req.params;
+		const { email } = req.params;
+
 		const senderId = (req as any).user._id;
+
+        const receiver : UserType = (await UserModel.find({
+            email
+        }))[0];
+
+        const receiverId = receiver._id;
 
         const newMessage = await MessageModel.create({
             ...body,
             receivers:[receiverId],
             sender:senderId
+        });
+
+        await UserModel.updateMany({
+            $or :[{_id:receiverId},{_id:senderId}]
+        },{
+            $push:{
+                messages:newMessage
+            }
         });
 
         const receiverSocketId = getReceiverSocketId(receiverId);
