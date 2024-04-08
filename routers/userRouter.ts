@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { authorizeHandler, loginHandler, logoutHandler, signupHandler } from "../controllers/userController";
 
-const router = Router();
+const userRouter = Router();
 
-router.post("/signup",signupHandler);
-router.post("/login",loginHandler);
-router.get("/logout",logoutHandler);
-router.get("/checkAuth",authorizeHandler);
+userRouter.post("/signup",signupHandler);
+userRouter.post("/login",loginHandler);
+userRouter.get("/logout",logoutHandler);
+userRouter.get("/checkAuth",authorizeHandler);
 
-export default router
+export default userRouter
