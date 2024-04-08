@@ -22,7 +22,16 @@ io.on("connection", (socket) => {
 	console.log("a user connected", socket.id);
 
 	const userId : string | undefined = socket.handshake.query.userId as string;
+
+	userId || socket.disconnect();
+
+	console.log("user id : ",userId);
+
 	if (userId != "undefined") userSocketMap[userId] = socket.id;
+
+	socket.on("new-message",(sender:string,message:string,to:string) => {
+		
+	});
 
 	socket.on("disconnect", () => {
 		console.log("user disconnected", socket.id);
