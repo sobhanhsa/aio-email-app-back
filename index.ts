@@ -4,7 +4,7 @@ configDotenv()
 
 import express from "express";
 import cookieParser from "cookie-parser";
-import router from "./userRouter";
+import router from "./routers/userRouter";
 import { app , server } from "./socket/socket";
 import cors from "cors";
 
