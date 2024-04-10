@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { MessageModel, UserModel, UserType } from "../db/schemas/userSchema";
+import { MessageModel } from "../db/schemas/messageSchema";
+import { UserModel, UserType } from "../db/schemas/userSchema";
 import { getReceiverSocketId, io } from "../socket/socket";
 import { connectToDB } from "../db/utils";
 
@@ -28,7 +29,7 @@ export const sendMessageHandler = async(req:Request,res:Response) => {
             $or :[{_id:receiverId},{_id:senderId}]
         },{
             $push:{
-                messages:newMessage
+                messages:newMessage._id
             }
         });
 
@@ -62,11 +63,11 @@ export const getMessagesHandler = async(req:Request,res:Response) => {
             {
                 sender:userId
             }
-        ]}).populate("receivers","sender");
+        ]}).populate("sender receivers","-hash");
 
         return res.status(200).json({
             message:"success",
-            messages
+            messages:messages.reverse()
         })
     } catch (error:any) {
         console.log("error in getMessages controller : ",error.message);
