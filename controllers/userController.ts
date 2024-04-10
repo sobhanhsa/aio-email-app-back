@@ -139,8 +139,7 @@ export async function loginHandler(req:Request, res:Response) {
 
     if (!user) return res.status(400).json({"message":"no account exists",user})
     
-    
-    const bResult = await bcrypt.compare(body.password,user.hash)
+    const bResult = await bcrypt.compare(body.password,user.hash as string)
     
     user.hash = ""
     
