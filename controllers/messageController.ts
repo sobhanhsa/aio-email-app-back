@@ -11,7 +11,8 @@ export const sendMessageHandler = async(req:Request,res:Response) => {
         const body = req.body;
 		const { email } = req.params;
 
-		const senderId = (req as any).user._id;
+		const user = (req as any).user;
+		const {_id : senderId} = user;
 
         const receiver : UserType = (await UserModel.find({
             email
@@ -19,12 +20,13 @@ export const sendMessageHandler = async(req:Request,res:Response) => {
 
         const receiverId = receiver._id;
 
+        
         const newMessage = await MessageModel.create({
             ...body,
             receivers:[receiverId],
             sender:senderId
         });
-
+        
         await UserModel.updateMany({
             $or :[{_id:receiverId},{_id:senderId}]
         },{
@@ -32,13 +34,17 @@ export const sendMessageHandler = async(req:Request,res:Response) => {
                 messages:newMessage._id
             }
         });
-
+        
         const receiverSocketId = getReceiverSocketId(receiverId);
-
+        
+        newMessage.sender = user;
+        
+        newMessage.receivers = [receiver];
+                
         if (receiverSocketId) {
             io.to(receiverSocketId).emit("newMessage",newMessage);
         }
-
+        
         return res.status(201).json({
             message:"success",
             newMessage
