@@ -1,33 +1,37 @@
 import mongoose, { Schema, InferSchemaType , Types } from 'mongoose';
 
 const messageSchema = new Schema({
-    receivers:{
-        type:[{type:Types.ObjectId,ref:"User"}],
-        required:true
+        receivers:{
+            type:[{type:Types.ObjectId,ref:"User"}],
+            required:true
+        },
+        sender:{
+            type:Types.ObjectId,
+            ref:"User",
+            required:true
+        },
+        subject:{
+            type:String,
+            required:true
+        },
+        body:{
+            type:String,
+            required:true
+        },
+        isReplied:{
+            type:Boolean,
+            default:false
+        },
+        repliedTo:{
+            type:mongoose.Types.ObjectId,
+            ref:"Message"
+        },
+        
     },
-    sender:{
-        type:Types.ObjectId,
-        ref:"User",
-        required:true
-    },
-    subject:{
-        type:String,
-        required:true
-    },
-    body:{
-        type:String,
-        required:true
-    },
-    isReplied:{
-        type:Boolean,
-        default:false
-    },
-    repliedTo:{
-        type:mongoose.Types.ObjectId,
-        ref:"Message"
+    {
+        timestamps:true
     }
-
-})
+);
 
 export type MessageType = InferSchemaType<typeof messageSchema> & {
     _id:string
